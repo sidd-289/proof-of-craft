@@ -23,6 +23,8 @@ import { WebsiteGrid } from '@/components/vault/WebsiteGrid';
 import { VideoQueue } from '@/components/youtube/VideoQueue';
 import { MilestoneTimeline } from '@/components/journey/MilestoneTimeline';
 import { SkillTree } from '@/components/gamification/SkillTree';
+import { CharacterDashboard } from '@/components/character/CharacterDashboard';
+import { INITIAL_CHARACTER_DATA } from '@/types/character';
 import { useTrackerStore } from '@/lib/store';
 import { AgentActionExecution } from '@/types';
 import { Button } from '@/components/ui/Button';
@@ -111,6 +113,32 @@ export default function Home() {
         {/* TAB 1: DAILY FOCUS DASHBOARD */}
         {activeTab === 'focus' && (
           <div className="space-y-8">
+            {/* Anime RPG Character Progression Card */}
+            <CharacterDashboard
+              initialData={{
+                ...INITIAL_CHARACTER_DATA,
+                name: store.profile.name || 'Sidd',
+                streakDays: store.profile.streakDays,
+                totalAchievements: store.milestones.length,
+                totalXp: store.profile.totalCraftsmanXp + store.profile.totalVelocityXp + store.profile.totalKnowledgeXp,
+                attributes: {
+                  ...INITIAL_CHARACTER_DATA.attributes,
+                  CON: {
+                    ...INITIAL_CHARACTER_DATA.attributes.CON,
+                    value: Math.min(30, 15 + store.profile.streakDays),
+                  },
+                  STR: {
+                    ...INITIAL_CHARACTER_DATA.attributes.STR,
+                    value: Math.min(30, Math.floor(store.profile.totalCraftsmanXp / 50)),
+                  },
+                  WIS: {
+                    ...INITIAL_CHARACTER_DATA.attributes.WIS,
+                    value: Math.min(30, Math.floor(store.profile.totalKnowledgeXp / 30)),
+                  },
+                },
+              }}
+            />
+
             {/* Dual Radar XP & Track Overview Card */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Craftsman Box */}
@@ -203,7 +231,7 @@ export default function Home() {
                           className="w-full h-full object-cover"
                         />
                         {video.duration && (
-                          <div className="absolute bottom-1 right-1 px-1 rounded bg-black/80 text-[10px] font-mono text-white">
+                          <div className="absolute bottom-1 right-1 px-1 rounded bg-black/80 text-xs font-mono text-white">
                             {video.duration}
                           </div>
                         )}
@@ -277,7 +305,7 @@ export default function Home() {
                           {site.tags.slice(0, 2).map((t, i) => (
                             <span
                               key={i}
-                              className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#1e222b] text-gray-400 border border-[#2d323d]"
+                              className="text-xs font-mono px-1.5 py-0.2 rounded bg-[#1e222b] text-gray-400 border border-[#2d323d]"
                             >
                               #{t}
                             </span>

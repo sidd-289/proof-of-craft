@@ -166,7 +166,7 @@ export const VideoQueue: React.FC<VideoQueueProps> = ({
                     </a>
 
                     {video.duration && (
-                      <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/80 text-[10px] font-mono text-white font-bold">
+                      <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/80 text-xs font-mono text-white font-bold">
                         {video.duration}
                       </div>
                     )}

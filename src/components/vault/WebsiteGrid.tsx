@@ -81,7 +81,7 @@ export const WebsiteGrid: React.FC<WebsiteGridProps> = ({
                 style={isSelected ? { backgroundColor: cat.color } : undefined}
               >
                 <span>{cat.name}</span>
-                <span className="opacity-70 text-[10px]">({count})</span>
+                <span className="opacity-70 text-xs">({count})</span>
               </button>
             );
           })}
@@ -186,7 +186,7 @@ export const WebsiteGrid: React.FC<WebsiteGridProps> = ({
                       {site.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1c1f26] text-gray-400 border border-[#2d323d]"
+                          className="text-xs font-mono px-2 py-0.5 rounded bg-[#1c1f26] text-gray-400 border border-[#2d323d]"
                         >
                           #{tag}
                         </span>

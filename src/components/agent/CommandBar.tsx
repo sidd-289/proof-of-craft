@@ -79,7 +79,7 @@ export const CommandBar: React.FC<CommandBarProps> = ({ context, onExecutionComp
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Paste any link, log a college lab milestone, or ask your agent to find/suggest..."
           disabled={isProcessing}
-          className="w-full bg-transparent text-sm md:text-base text-white placeholder-gray-500 focus:outline-none font-medium"
+          className="w-full bg-transparent text-sm md:text-base text-white placeholder-gray-400 focus:outline-none font-medium"
         />
 
         <div className="flex items-center gap-2 ml-2">

@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, onSaveApiKey, onResetDa
               <span className="text-sm md:text-base font-black tracking-tight text-white font-mono">
                 TRACKER // AGENT
               </span>
-              <span className="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#1f232c] text-gray-400 border border-[#2d323d]">
+              <span className="hidden sm:inline-block text-xs font-mono px-1.5 py-0.5 rounded bg-[#1f232c] text-gray-400 border border-[#2d323d]">
                 v1.0
               </span>
             </div>

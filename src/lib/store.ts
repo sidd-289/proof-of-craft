@@ -10,6 +10,8 @@ import {
   UserProfile,
   TrackType,
   AuthorshipMode,
+  PlatformType,
+  PlatformStats,
 } from '@/types';
 import {
   INITIAL_CATEGORIES,
@@ -307,6 +309,45 @@ export function useTrackerStore() {
     setProfile((prev) => ({ ...prev, geminiApiKey: key }));
   };
 
+  const saveCompetitiveProfile = (platform: PlatformType, stats: PlatformStats) => {
+    setProfile((prev) => {
+      const updatedProfiles = {
+        ...(prev.competitiveProfiles || {}),
+        [platform]: stats,
+      };
+
+      let bonusCraftsman = 0;
+      let bonusVelocity = 0;
+      if (stats.verified) {
+        if (platform === 'leetcode' || platform === 'codeforces' || platform === 'codechef') {
+          bonusCraftsman = 75;
+        } else if (platform === 'github') {
+          bonusVelocity = 75;
+        }
+      }
+
+      return {
+        ...prev,
+        totalCraftsmanXp: prev.totalCraftsmanXp + bonusCraftsman,
+        totalVelocityXp: prev.totalVelocityXp + bonusVelocity,
+        competitiveProfiles: updatedProfiles,
+      };
+    });
+    sound.playSuccess();
+  };
+
+  const removeCompetitiveProfile = (platform: PlatformType) => {
+    setProfile((prev) => {
+      const updatedProfiles = { ...(prev.competitiveProfiles || {}) };
+      delete updatedProfiles[platform];
+      return {
+        ...prev,
+        competitiveProfiles: updatedProfiles,
+      };
+    });
+    sound.playClick();
+  };
+
   return {
     categories,
     websites,
@@ -328,6 +369,8 @@ export function useTrackerStore() {
     logMilestone,
     addCategory,
     setGeminiApiKey,
+    saveCompetitiveProfile,
+    removeCompetitiveProfile,
   };
 }
 

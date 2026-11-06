@@ -8,25 +8,35 @@ import { XPProgressBar } from './XPProgressBar';
 import { AttributeStats } from './AttributeStats';
 import { RankBadge } from './RankBadge';
 import { CharacterIllustration } from './CharacterIllustration';
+import { CompetitiveProfilesModal } from './CompetitiveProfilesModal';
 import { CharacterData, AttributeStat, RankTier } from '@/types/character';
+import { PlatformType, PlatformStats, UserCompetitiveProfiles } from '@/types/profile';
 import { Modal } from '@/components/ui/Modal';
-import { Sparkles, Edit3 } from 'lucide-react';
+import { Sparkles, Edit3, ShieldCheck, CheckCircle2, Code2, Terminal, Award } from 'lucide-react';
+import { GithubIcon } from '@/components/ui/Icons';
 import { sound } from '@/lib/sound';
 
 interface CharacterDashboardProps {
   initialData: CharacterData;
+  competitiveProfiles?: UserCompetitiveProfiles;
   onOpenSettings?: () => void;
   onXpGain?: (amount: number) => void;
+  onSaveCompetitiveProfile?: (platform: PlatformType, stats: PlatformStats) => void;
+  onRemoveCompetitiveProfile?: (platform: PlatformType) => void;
 }
 
 export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
   initialData,
+  competitiveProfiles,
   onOpenSettings,
   onXpGain,
+  onSaveCompetitiveProfile,
+  onRemoveCompetitiveProfile,
 }) => {
   const [character, setCharacter] = useState<CharacterData>(initialData);
   const [selectedAttribute, setSelectedAttribute] = useState<AttributeStat | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCompetitiveModalOpen, setIsCompetitiveModalOpen] = useState(false);
   const [editName, setEditName] = useState(character.name);
   const [editTitle, setEditTitle] = useState(character.title);
 
@@ -108,15 +118,94 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                   level={character.level}
                 />
 
-                {/* Edit Character Trigger */}
-                <button
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="p-1.5 rounded-lg text-gray-500 hover:text-[#F5F0E5] hover:bg-[#202020] transition-colors text-xs flex items-center gap-1 font-mono"
-                  title="Edit Character"
-                >
-                  <Edit3 size={14} />
-                  <span className="hidden sm:inline">Edit</span>
-                </button>
+                <div className="flex items-center gap-1.5">
+                  {/* Competitive IDs / Guild Profiles Trigger */}
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      setIsCompetitiveModalOpen(true);
+                    }}
+                    className="p-1.5 px-2.5 rounded-lg bg-[#202020] text-gray-300 hover:text-[#F5F0E5] hover:border-[#FF8A32]/60 border border-[#2d2d2d] transition-all text-xs flex items-center gap-1.5 font-mono shadow-sm active:scale-95"
+                    title="Track Competitive Profiles & GitHub"
+                  >
+                    <ShieldCheck size={14} className="text-[#E9A13D]" />
+                    <span className="hidden sm:inline">Track IDs</span>
+                  </button>
+
+                  {/* Edit Character Trigger */}
+                  <button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="p-1.5 px-2 rounded-lg text-gray-400 hover:text-[#F5F0E5] hover:bg-[#202020] transition-colors text-xs flex items-center gap-1 font-mono"
+                    title="Edit Character"
+                  >
+                    <Edit3 size={14} />
+                    <span className="hidden sm:inline">Edit</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Linked Competitive Profiles & Proof-of-Work Badges Strip */}
+              <div className="flex items-center gap-2 flex-wrap mb-4">
+                {competitiveProfiles && Object.values(competitiveProfiles).some((p) => p?.verified) ? (
+                  <>
+                    {competitiveProfiles.github?.verified && (
+                      <button
+                        onClick={() => setIsCompetitiveModalOpen(true)}
+                        className="px-2.5 py-1 rounded-md bg-[#1d1d1d] border border-[#333333] hover:border-[#F5F0E5]/60 text-xs font-mono text-[#F5F0E5] flex items-center gap-1.5 transition-all shadow-sm"
+                        title="GitHub Verified Proof"
+                      >
+                        <GithubIcon size={12} />
+                        <span>{competitiveProfiles.github.username}</span>
+                        <span className="text-[10px] text-[#888888]">({competitiveProfiles.github.metrics?.primaryValue} repos)</span>
+                        <CheckCircle2 size={11} className="text-emerald-400" />
+                      </button>
+                    )}
+                    {competitiveProfiles.leetcode?.verified && (
+                      <button
+                        onClick={() => setIsCompetitiveModalOpen(true)}
+                        className="px-2.5 py-1 rounded-md bg-[#221a0f] border border-[#FFA116]/40 hover:border-[#FFA116] text-xs font-mono text-[#FFA116] flex items-center gap-1.5 transition-all shadow-sm"
+                        title="LeetCode Verified Proof"
+                      >
+                        <Code2 size={12} />
+                        <span>LeetCode</span>
+                        <span className="text-[10px] text-[#F5F0E5]">({competitiveProfiles.leetcode.metrics?.primaryValue} Solved)</span>
+                        <CheckCircle2 size={11} className="text-emerald-400" />
+                      </button>
+                    )}
+                    {competitiveProfiles.codeforces?.verified && (
+                      <button
+                        onClick={() => setIsCompetitiveModalOpen(true)}
+                        className="px-2.5 py-1 rounded-md bg-[#0a2133] border border-[#38BDF8]/40 hover:border-[#38BDF8] text-xs font-mono text-[#38BDF8] flex items-center gap-1.5 transition-all shadow-sm"
+                        title="Codeforces Verified Proof"
+                      >
+                        <Terminal size={12} />
+                        <span>CF</span>
+                        <span className="text-[10px] text-[#F5F0E5]">({competitiveProfiles.codeforces.metrics?.primaryValue} {competitiveProfiles.codeforces.metrics?.rankTitle})</span>
+                        <CheckCircle2 size={11} className="text-emerald-400" />
+                      </button>
+                    )}
+                    {competitiveProfiles.codechef?.verified && (
+                      <button
+                        onClick={() => setIsCompetitiveModalOpen(true)}
+                        className="px-2.5 py-1 rounded-md bg-[#1f1733] border border-[#C4B5FD]/40 hover:border-[#C4B5FD] text-xs font-mono text-[#C4B5FD] flex items-center gap-1.5 transition-all shadow-sm"
+                        title="CodeChef Verified Proof"
+                      >
+                        <Award size={12} />
+                        <span>CodeChef</span>
+                        <span className="text-[10px] text-[#F5F0E5]">({competitiveProfiles.codechef.metrics?.primaryValue})</span>
+                        <CheckCircle2 size={11} className="text-emerald-400" />
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setIsCompetitiveModalOpen(true)}
+                    className="px-2.5 py-1 rounded-md bg-[#181818] border border-dashed border-[#383838] hover:border-[#FF8A32] text-xs font-mono text-gray-400 hover:text-[#F5F0E5] flex items-center gap-1.5 transition-all"
+                  >
+                    <ShieldCheck size={13} className="text-[#E9A13D]" />
+                    <span>+ Link & Verify Competitive IDs & GitHub</span>
+                  </button>
+                )}
               </div>
 
               {/* XP Progression System */}
@@ -250,6 +339,15 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
           </form>
         </Modal>
       )}
+
+      {/* Competitive Profiles & GitHub Tracker Modal */}
+      <CompetitiveProfilesModal
+        isOpen={isCompetitiveModalOpen}
+        onClose={() => setIsCompetitiveModalOpen(false)}
+        profiles={competitiveProfiles || {}}
+        onSaveProfile={onSaveCompetitiveProfile || (() => {})}
+        onRemoveProfile={onRemoveCompetitiveProfile || (() => {})}
+      />
     </div>
   );
 };

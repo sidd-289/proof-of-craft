@@ -1,3 +1,6 @@
+import { UserCompetitiveProfiles, PlatformStats, PlatformType } from './profile';
+export * from './profile';
+
 export type TrackType = 'craftsman' | 'velocity' | 'knowledge';
 
 export type AuthorshipMode = 'handcrafted' | 'assisted' | 'ai_generated';
@@ -78,6 +81,7 @@ export interface UserProfile {
   streakDays: number;
   lastActiveDate: string;
   geminiApiKey?: string;
+  competitiveProfiles?: UserCompetitiveProfiles;
 }
 
 export interface AgentActionExecution {

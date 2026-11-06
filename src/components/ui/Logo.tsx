@@ -62,3 +62,4 @@ export const Logo: React.FC<LogoProps> = ({ size = 36, className = '' }) => {
     </div>
   );
 };
+

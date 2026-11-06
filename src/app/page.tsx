@@ -149,26 +149,52 @@ export default function Home() {
                 attributes: {
                   CON: {
                     ...INITIAL_CHARACTER_DATA.attributes.CON,
-                    value: Math.min(30, 12 + store.profile.streakDays),
+                    value: Math.min(
+                      30,
+                      12 + store.profile.streakDays + (store.profile.competitiveProfiles?.github?.verified ? 3 : 0)
+                    ),
                   },
                   FOC: {
                     ...INITIAL_CHARACTER_DATA.attributes.FOC,
-                    value: Math.min(30, 8 + store.youtubeVideos.filter((v) => v.status === 'watched').length * 2),
+                    value: Math.min(
+                      30,
+                      8 +
+                        store.youtubeVideos.filter((v) => v.status === 'watched').length * 2 +
+                        (store.profile.competitiveProfiles?.leetcode?.verified ? 4 : 0)
+                    ),
                   },
                   DIS: {
                     ...INITIAL_CHARACTER_DATA.attributes.DIS,
-                    value: Math.min(30, 10 + store.milestones.filter((m) => m.authorship === 'handcrafted').length * 4),
+                    value: Math.min(
+                      30,
+                      10 +
+                        store.milestones.filter((m) => m.authorship === 'handcrafted').length * 4 +
+                        (store.profile.competitiveProfiles?.codeforces?.verified ? 4 : 0)
+                    ),
                   },
                   STR: {
                     ...INITIAL_CHARACTER_DATA.attributes.STR,
-                    value: Math.min(30, 8 + Math.floor(store.profile.totalCraftsmanXp / 50)),
+                    value: Math.min(
+                      30,
+                      8 +
+                        Math.floor(store.profile.totalCraftsmanXp / 50) +
+                        (store.profile.competitiveProfiles?.leetcode?.verified ? 3 : 0)
+                    ),
                   },
                   WIS: {
                     ...INITIAL_CHARACTER_DATA.attributes.WIS,
-                    value: Math.min(30, 8 + Math.floor((store.profile.totalKnowledgeXp + store.profile.totalVelocityXp) / 45)),
+                    value: Math.min(
+                      30,
+                      8 +
+                        Math.floor((store.profile.totalKnowledgeXp + store.profile.totalVelocityXp) / 45) +
+                        (store.profile.competitiveProfiles?.github?.verified ? 3 : 0)
+                    ),
                   },
                 },
               }}
+              competitiveProfiles={store.profile.competitiveProfiles}
+              onSaveCompetitiveProfile={store.saveCompetitiveProfile}
+              onRemoveCompetitiveProfile={store.removeCompetitiveProfile}
             />
 
             {/* Dual Mastery Specialization Cards */}

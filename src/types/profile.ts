@@ -92,3 +92,4 @@ export const PLATFORM_DEFINITIONS: PlatformDefinition[] = [
     docsUrl: 'https://www.codechef.com',
   },
 ];
+

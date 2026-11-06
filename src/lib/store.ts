@@ -77,7 +77,23 @@ export function useTrackerStore() {
       setMilestones(savedMiles ? JSON.parse(savedMiles) : INITIAL_MILESTONES);
 
       const savedProf = localStorage.getItem(STORAGE_KEYS.PROFILE);
-      setProfile(savedProf ? JSON.parse(savedProf) : INITIAL_USER_PROFILE);
+      if (savedProf) {
+        const parsed = JSON.parse(savedProf);
+        setProfile({
+          ...INITIAL_USER_PROFILE,
+          ...parsed,
+          characterCustomization: {
+            ...INITIAL_USER_PROFILE.characterCustomization,
+            ...(parsed.characterCustomization || {}),
+          },
+          competitiveProfiles: {
+            ...INITIAL_USER_PROFILE.competitiveProfiles,
+            ...(parsed.competitiveProfiles || {}),
+          },
+        });
+      } else {
+        setProfile(INITIAL_USER_PROFILE);
+      }
     } catch (e) {
       console.error('Failed to load local storage', e);
       setCategories(INITIAL_CATEGORIES);
@@ -359,6 +375,36 @@ export function useTrackerStore() {
     sound.playClick();
   };
 
+  const mergeSyncedMilestones = (newMilestones: Milestone[]) => {
+    let addedCraftsman = 0;
+    let addedVelocity = 0;
+    let addedCount = 0;
+
+    setMilestones((prev) => {
+      const existingIds = new Set(prev.map((m) => m.id));
+      const existingTitles = new Set(prev.map((m) => m.title));
+      const toAdd = newMilestones.filter((m) => !existingIds.has(m.id) && !existingTitles.has(m.title));
+      addedCount = toAdd.length;
+
+      toAdd.forEach((m) => {
+        addedCraftsman += m.xpAwarded.craftsmanXp;
+        addedVelocity += m.xpAwarded.velocityXp;
+      });
+
+      return [...toAdd, ...prev];
+    });
+
+    if (addedCraftsman > 0 || addedVelocity > 0) {
+      setProfile((prev) => ({
+        ...prev,
+        totalCraftsmanXp: prev.totalCraftsmanXp + addedCraftsman,
+        totalVelocityXp: prev.totalVelocityXp + addedVelocity,
+      }));
+    }
+
+    return { count: addedCount, xp: addedCraftsman + addedVelocity };
+  };
+
   return {
     categories,
     websites,
@@ -383,6 +429,7 @@ export function useTrackerStore() {
     updateProfile,
     saveCompetitiveProfile,
     removeCompetitiveProfile,
+    mergeSyncedMilestones,
   };
 }
 

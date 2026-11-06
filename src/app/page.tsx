@@ -18,6 +18,7 @@ import {
   PlaySquare,
   Shield,
   Layers,
+  User,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { CommandBar } from '@/components/agent/CommandBar';
@@ -28,6 +29,7 @@ import { VideoQueue } from '@/components/youtube/VideoQueue';
 import { MilestoneTimeline } from '@/components/journey/MilestoneTimeline';
 import { SkillTree } from '@/components/gamification/SkillTree';
 import { CharacterDashboard } from '@/components/character/CharacterDashboard';
+import { ProfileSection } from '@/components/profile/ProfileSection';
 import { INITIAL_CHARACTER_DATA } from '@/types/character';
 import { useTrackerStore } from '@/lib/store';
 import { AgentActionExecution } from '@/types';
@@ -37,7 +39,7 @@ import { INITIAL_CATEGORIES, INITIAL_MILESTONES, INITIAL_SKILLS, INITIAL_USER_PR
 
 export default function Home() {
   const store = useTrackerStore();
-  const [activeTab, setActiveTab] = useState<'focus' | 'vault' | 'youtube' | 'journey' | 'skills'>('focus');
+  const [activeTab, setActiveTab] = useState<'focus' | 'vault' | 'youtube' | 'journey' | 'skills' | 'profile'>('focus');
   const [agentResult, setAgentResult] = useState<AgentActionExecution | null>(null);
 
   // Auto-capture OAuth redirect callback (e.g. GitHub Sign-in)
@@ -96,6 +98,35 @@ export default function Home() {
     window.location.reload();
   };
 
+  const handleSyncActivity = async () => {
+    const githubUser = store.profile.competitiveProfiles?.github?.verified
+      ? store.profile.competitiveProfiles.github.username
+      : undefined;
+    const leetcodeUser = store.profile.competitiveProfiles?.leetcode?.verified
+      ? store.profile.competitiveProfiles.leetcode.username
+      : undefined;
+    const codeforcesUser = store.profile.competitiveProfiles?.codeforces?.verified
+      ? store.profile.competitiveProfiles.codeforces.username
+      : undefined;
+
+    const res = await fetch('/api/sync-activity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        githubUsername: githubUser,
+        leetcodeUsername: leetcodeUser,
+        codeforcesUsername: codeforcesUser,
+      }),
+    });
+
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to sync platform activity');
+    }
+
+    return store.mergeSyncedMilestones(data.milestones || []);
+  };
+
   const toWatchVideos = store.youtubeVideos.filter((v) => v.status === 'to_watch').slice(0, 2);
   const recentWebsites = store.websites.slice(0, 3);
   const latestMilestone = store.milestones[0];
@@ -114,6 +145,7 @@ export default function Home() {
         profile={store.profile}
         onSaveApiKey={store.setGeminiApiKey}
         onResetData={handleResetData}
+        onNavigateToProfile={() => setActiveTab('profile')}
       />
 
       {/* Main Content Area */}
@@ -122,6 +154,7 @@ export default function Home() {
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar border-b border-[#222222]">
           {[
             { id: 'focus', label: 'Daily Focus', icon: Compass, count: null },
+            { id: 'profile', label: 'Profile Dossier', icon: User, count: null },
             { id: 'vault', label: 'Vault', icon: Bookmark, count: store.websites.length },
             { id: 'youtube', label: 'YouTube', icon: PlaySquare, count: store.youtubeVideos.filter((v) => v.status === 'to_watch').length },
             { id: 'journey', label: 'Journey & Labs', icon: Shield, count: store.milestones.length },
@@ -507,6 +540,8 @@ export default function Home() {
           <MilestoneTimeline
             milestones={store.milestones}
             onLogMilestone={store.logMilestone}
+            onSyncActivity={handleSyncActivity}
+            competitiveProfiles={store.profile.competitiveProfiles}
           />
         )}
 
@@ -515,6 +550,76 @@ export default function Home() {
           <SkillTree
             skills={store.skills}
             onPracticeSkill={(name, xp, track) => store.awardXpToSkill(name, xp, track)}
+          />
+        )}
+
+        {/* TAB 6: PROFILE DOSSIER */}
+        {activeTab === 'profile' && (
+          <ProfileSection
+            profile={store.profile}
+            character={{
+              ...INITIAL_CHARACTER_DATA,
+              name: store.profile.name || 'Sidd',
+              title: store.profile.title || 'Cyber Craftsman & System Architect',
+              avatarUrl: store.profile.avatarUrl || '/assets/character-cyber-craftsman.png',
+              customization: store.profile.characterCustomization || INITIAL_CHARACTER_DATA.customization,
+              level: currentLevel,
+              currentXp: currentXpProgress,
+              nextLevelXp: nextLevelRequirement,
+              streakDays: store.profile.streakDays,
+              totalAchievements: store.milestones.length,
+              totalXp: totalPlayerXp,
+              attributes: {
+                CON: {
+                  ...INITIAL_CHARACTER_DATA.attributes.CON,
+                  value: Math.min(
+                    30,
+                    12 + store.profile.streakDays + (store.profile.competitiveProfiles?.github?.verified ? 3 : 0)
+                  ),
+                },
+                FOC: {
+                  ...INITIAL_CHARACTER_DATA.attributes.FOC,
+                  value: Math.min(
+                    30,
+                    8 +
+                      store.youtubeVideos.filter((v) => v.status === 'watched').length * 2 +
+                      (store.profile.competitiveProfiles?.leetcode?.verified ? 4 : 0)
+                  ),
+                },
+                DIS: {
+                  ...INITIAL_CHARACTER_DATA.attributes.DIS,
+                  value: Math.min(
+                    30,
+                    10 +
+                      store.milestones.filter((m) => m.authorship === 'handcrafted').length * 4 +
+                      (store.profile.competitiveProfiles?.codeforces?.verified ? 4 : 0)
+                  ),
+                },
+                STR: {
+                  ...INITIAL_CHARACTER_DATA.attributes.STR,
+                  value: Math.min(
+                    30,
+                    8 +
+                      Math.floor(store.profile.totalCraftsmanXp / 50) +
+                      (store.profile.competitiveProfiles?.leetcode?.verified ? 3 : 0)
+                  ),
+                },
+                WIS: {
+                  ...INITIAL_CHARACTER_DATA.attributes.WIS,
+                  value: Math.min(
+                    30,
+                    8 +
+                      Math.floor((store.profile.totalKnowledgeXp + store.profile.totalVelocityXp) / 45) +
+                      (store.profile.competitiveProfiles?.github?.verified ? 3 : 0) +
+                      (store.profile.competitiveProfiles?.codechef?.verified ? 4 : 0)
+                  ),
+                },
+              },
+            }}
+            competitiveProfiles={store.profile.competitiveProfiles}
+            onUpdateProfile={store.updateProfile}
+            onSaveCompetitiveProfile={store.saveCompetitiveProfile}
+            onRemoveCompetitiveProfile={store.removeCompetitiveProfile}
           />
         )}
       </main>

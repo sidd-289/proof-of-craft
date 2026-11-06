@@ -39,6 +39,11 @@ export const FlipCharacterCard: React.FC<FlipCharacterCardProps> = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  // Reset image error state whenever avatar URL changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [character.avatarUrl]);
+
   const auraColor = character.customization?.auraColor || '#FF8A32';
   const avatarUrl = character.avatarUrl || '/assets/character.png';
 
@@ -344,3 +349,4 @@ export const FlipCharacterCard: React.FC<FlipCharacterCardProps> = ({
     </div>
   );
 };
+

@@ -19,9 +19,15 @@ interface HeaderProps {
   profile: UserProfile;
   onSaveApiKey: (key: string) => void;
   onResetData: () => void;
+  onNavigateToProfile?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ profile, onSaveApiKey, onResetData }) => {
+export const Header: React.FC<HeaderProps> = ({
+  profile,
+  onSaveApiKey,
+  onResetData,
+  onNavigateToProfile,
+}) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(sound.getMuted());
 
@@ -82,7 +88,15 @@ export const Header: React.FC<HeaderProps> = ({ profile, onSaveApiKey, onResetDa
           </div>
 
           {/* Character Mini Avatar Pill */}
-          <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-[#181818] border border-[#2b2b2b] shadow-sm">
+          <button
+            type="button"
+            onClick={() => {
+              sound.playClick();
+              if (onNavigateToProfile) onNavigateToProfile();
+            }}
+            className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#181818] hover:bg-[#222222] border border-[#2b2b2b] hover:border-[#FF8A32] shadow-sm transition-all cursor-pointer active:scale-95"
+            title="Open Profile Dossier"
+          >
             <img
               src={profile.avatarUrl || '/assets/character-cyber-craftsman.png'}
               alt={profile.name}
@@ -91,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, onSaveApiKey, onResetDa
             <span className="text-xs font-mono font-bold text-[#F5F0E5] hidden md:inline">
               {profile.name}
             </span>
-          </div>
+          </button>
 
           {/* Sound Toggle */}
           <button

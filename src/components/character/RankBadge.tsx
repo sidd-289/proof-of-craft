@@ -85,3 +85,4 @@ export const RankBadge: React.FC<RankBadgeProps> = ({ currentRank, onRankSelect 
     </div>
   );
 };
+

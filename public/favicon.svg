@@ -1,0 +1,18 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-grad-primary" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FF8A32" />
+      <stop offset="100%" stopColor="#E9A13D" />
+    </linearGradient>
+    <linearGradient id="logo-grad-accent" x1="16" y1="4" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#FFF" stopOpacity="0.9" />
+      <stop offset="100%" stopColor="#FF8A32" stopOpacity="0.4" />
+    </linearGradient>
+  </defs>
+
+  <rect width="32" height="32" rx="8" fill="#141414" />
+  <polygon points="16,4 28,9.5 28,22.5 16,28 4,22.5 4,9.5" stroke="url(#logo-grad-primary)" stroke-width="1.75" stroke-linejoin="round" fill="#171717" />
+  <path d="M16 8.5L23 13.5L16 18.5L9 13.5L16 8.5Z" fill="url(#logo-grad-primary)" />
+  <path d="M16 14.5L21 18.5L16 22.5L11 18.5L16 14.5Z" fill="url(#logo-grad-accent)" />
+  <circle cx="16" cy="18.5" r="1.5" fill="#FFFFFF" />
+</svg>

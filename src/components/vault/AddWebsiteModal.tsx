@@ -138,7 +138,7 @@ export const AddWebsiteModal: React.FC<AddWebsiteModalProps> = ({
             Cancel
           </Button>
           <Button variant="sky" type="submit">
-            Save to Vault 🔖
+            Save to Vault
           </Button>
         </div>
       </form>

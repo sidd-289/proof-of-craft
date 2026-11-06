@@ -36,3 +36,4 @@ export const LevelDisplay: React.FC<LevelDisplayProps> = ({ name, title, level }
     </div>
   );
 };
+

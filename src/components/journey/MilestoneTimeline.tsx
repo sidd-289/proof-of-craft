@@ -79,9 +79,9 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           {[
             { id: 'all', label: `All Milestones (${milestones.length})` },
-            { id: 'college', label: '🎓 College & Labs' },
-            { id: 'hackathons', label: '⚔️ Hackathons' },
-            { id: 'projects', label: '🚀 Personal Projects' },
+            { id: 'college', label: 'College & Labs' },
+            { id: 'hackathons', label: 'Hackathons' },
+            { id: 'projects', label: 'Personal Projects' },
           ].map((tab) => (
             <button
               key={tab.id}

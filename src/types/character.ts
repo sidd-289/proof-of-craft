@@ -87,3 +87,4 @@ export const INITIAL_CHARACTER_DATA: CharacterData = {
     },
   },
 };
+

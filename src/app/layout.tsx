@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tracker // Agentic Vault & Skill Matrix",
   description: "Personal AI tracker for categorized bookmarks, YouTube watch lists, college labs, hackathons, and gamified skill progression.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

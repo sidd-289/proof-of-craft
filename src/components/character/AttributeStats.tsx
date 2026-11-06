@@ -69,3 +69,4 @@ export const AttributeStats: React.FC<AttributeStatsProps> = ({
     </div>
   );
 };
+

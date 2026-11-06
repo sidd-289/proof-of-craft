@@ -235,7 +235,7 @@ export const LogMilestoneModal: React.FC<LogMilestoneModalProps> = ({ isOpen, on
             variant={authorship === 'handcrafted' ? 'mint' : 'violet'}
             type="submit"
           >
-            Log Milestone & Claim XP 🏆
+            Log Milestone & Claim XP
           </Button>
         </div>
       </form>

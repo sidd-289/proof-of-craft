@@ -121,7 +121,7 @@ export const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({ event, o
             className="w-full text-base"
             onClick={onDismiss}
           >
-            Claim Mastery & Continue 🚀
+            Claim Mastery & Continue
           </Button>
         </motion.div>
       </div>

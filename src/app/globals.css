@@ -1,12 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0c0d11;
-  --foreground: #f4f4f6;
-  --surface: #14161c;
-  --surface-hover: #1c1f27;
-  --border-muted: #2d323d;
-  --border-strong: #464d5c;
+  --background: #101010;
+  --foreground: #F5F0E5;
+  --surface: #171717;
+  --surface-hover: #202020;
+  --border-muted: #262626;
+  --border-strong: #383838;
+  --orange: #FF8A32;
+  --gold: #E9A13D;
+  --cream: #F5F0E5;
   --mint: #6ee7b7;
   --violet: #c4b5fd;
   --amber: #fde047;
@@ -21,18 +24,18 @@ body {
   overflow-x: hidden;
 }
 
-/* Minimal Neo-Brutalist Utility Classes */
+/* Minimal Anime RPG Utility Classes */
 .brutal-card {
-  background-color: #14161c;
-  border: 2px solid #2d323d;
-  box-shadow: 3px 3px 0px #000000;
+  background-color: #171717;
+  border: 1px solid #282828;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-radius: 1rem;
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .brutal-card:hover {
-  border-color: #464d5c;
-  box-shadow: 4px 4px 0px #000000;
+  border-color: #383838;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
 }
 
 .brutal-btn {
@@ -41,23 +44,23 @@ body {
   justify-content: center;
   gap: 0.5rem;
   font-weight: 600;
-  border: 2px solid #2d323d;
-  box-shadow: 3px 3px 0px #000000;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   border-radius: 0.75rem;
-  transition: all 0.1s ease;
+  transition: all 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
 .brutal-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px #000000;
-  border-color: #f4f4f6;
+  transform: translateY(-1px);
+  border-color: #FF8A32;
+  box-shadow: 0 4px 12px rgba(255, 138, 50, 0.2);
 }
 
 .brutal-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000000;
+  transform: translateY(1px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
 .brutal-badge {
@@ -69,8 +72,7 @@ body {
   letter-spacing: 0.02em;
   padding: 0.2rem 0.55rem;
   border-radius: 0.5rem;
-  border: 1.5px solid #2d323d;
-  box-shadow: 1.5px 1.5px 0px #000000;
+  border: 1px solid #2d2d2d;
 }
 
 /* Custom Scrollbar */
@@ -80,15 +82,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0c0d11;
+  background: #101010;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2d323d;
+  background: #282828;
   border-radius: 4px;
-  border: 1px solid #14161c;
+  border: 1px solid #171717;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #464d5c;
+  background: #383838;
 }

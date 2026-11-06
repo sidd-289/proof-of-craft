@@ -83,7 +83,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
     return {
       type: 'save_youtube',
       success: true,
-      message: `🎬 Automatically saved to YouTube ${isWatched ? 'Watched Archive' : 'To Watch Queue'}!`,
+      message: `Automatically saved to YouTube ${isWatched ? 'Watched Archive' : 'To Watch Queue'}.`,
       data: newVideo,
       xpGained: isWatched
         ? {
@@ -138,7 +138,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
     return {
       type: 'save_website',
       success: true,
-      message: `🔖 Website saved and categorized under "${context.categories.find((c) => c.id === categoryId)?.name}"!`,
+      message: `Website saved and categorized under "${context.categories.find((c) => c.id === categoryId)?.name}".`,
       data: newSite,
       xpGained: {
         track: 'knowledge',
@@ -161,7 +161,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
       return {
         type: 'mark_video_watched',
         success: true,
-        message: `✅ Marked "${matchingVideo.title}" as Watched!`,
+        message: `Marked "${matchingVideo.title}" as Watched.`,
         data: matchingVideo,
         xpGained: {
           track: 'knowledge',
@@ -234,7 +234,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
     return {
       type: 'log_milestone',
       success: true,
-      message: `🏆 Milestone logged under ${authorship === 'handcrafted' ? 'Craftsman Track (100% Authentic Code)' : 'Velocity Track (AI-Assisted)'}!`,
+      message: `Milestone logged under ${authorship === 'handcrafted' ? 'Craftsman Track (100% Authentic Code)' : 'Velocity Track (AI-Assisted)'}.`,
       data: milestone,
       xpGained: {
         track: authorship === 'handcrafted' ? 'craftsman' : 'velocity',
@@ -255,7 +255,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
       return {
         type: 'search',
         success: true,
-        message: `🔍 Found website: "${matchedWeb.title}"`,
+        message: `Found website: "${matchedWeb.title}"`,
         data: matchedWeb,
       };
     }
@@ -264,7 +264,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
       return {
         type: 'search',
         success: true,
-        message: `🔍 Found video: "${matchedYt.title}" in your ${matchedYt.status === 'to_watch' ? 'To Watch queue' : 'Watched archive'}`,
+        message: `Found video: "${matchedYt.title}" in your ${matchedYt.status === 'to_watch' ? 'To Watch queue' : 'Watched archive'}`,
         data: matchedYt,
       };
     }
@@ -281,7 +281,7 @@ async function parseLocally(prompt: string, context: AgentContext): Promise<Agen
     return {
       type: 'ideate',
       success: true,
-      message: `💡 Hackathon & Project Inspiration:`,
+      message: `Hackathon & Project Inspiration:`,
       data: {
         ideas: [
           {
@@ -329,7 +329,7 @@ async function executeAction(apiResult: any, context: AgentContext, originalProm
     return {
       type: 'save_youtube',
       success: true,
-      message: `🎬 Gemini Agent saved video to ${payload.isWatched ? 'Watched' : 'To Watch'} queue!`,
+      message: `Gemini Agent saved video to ${payload.isWatched ? 'Watched' : 'To Watch'} queue.`,
       data: video,
       xpGained: {
         track: 'knowledge',
@@ -353,7 +353,7 @@ async function executeAction(apiResult: any, context: AgentContext, originalProm
     return {
       type: 'save_website',
       success: true,
-      message: `🔖 Gemini Agent organized link into ${payload.categoryName || 'Vault'}!`,
+      message: `Gemini Agent organized link into ${payload.categoryName || 'Vault'}.`,
       data: site,
       xpGained: {
         track: 'knowledge',
@@ -392,7 +392,7 @@ async function executeAction(apiResult: any, context: AgentContext, originalProm
     return {
       type: 'log_milestone',
       success: true,
-      message: `🏆 Gemini Agent logged milestone under ${authorship === 'handcrafted' ? 'Craftsman Track' : 'Velocity Track'}!`,
+      message: `Gemini Agent logged milestone under ${authorship === 'handcrafted' ? 'Craftsman Track' : 'Velocity Track'}.`,
       data: milestone,
       xpGained: {
         track: authorship === 'handcrafted' ? 'craftsman' : 'velocity',

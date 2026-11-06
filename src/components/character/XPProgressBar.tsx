@@ -54,3 +54,4 @@ export const XPProgressBar: React.FC<XPProgressBarProps> = ({
     </div>
   );
 };
+

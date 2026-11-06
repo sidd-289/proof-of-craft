@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from './StatusBar';
 import { DayNavigation } from './DayNavigation';
 import { LevelDisplay } from './LevelDisplay';
@@ -29,6 +29,21 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editName, setEditName] = useState(character.name);
   const [editTitle, setEditTitle] = useState(character.title);
+
+  // Sync state if external store data updates (e.g. video watched, lab logged)
+  useEffect(() => {
+    setCharacter((prev) => ({
+      ...prev,
+      name: initialData.name || prev.name,
+      streakDays: initialData.streakDays,
+      totalAchievements: initialData.totalAchievements,
+      totalXp: initialData.totalXp,
+      currentXp: initialData.currentXp,
+      nextLevelXp: initialData.nextLevelXp,
+      level: initialData.level,
+      attributes: initialData.attributes,
+    }));
+  }, [initialData]);
 
   // Day Navigation handlers
   const handlePrevDay = () => {
@@ -176,8 +191,8 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
               {selectedAttribute.description}
             </p>
 
-            <div className="text-xs text-gray-400 font-mono">
-              💡 Tip: Completing college labs levels up <span className="text-[#F472B6] font-bold">STR</span>, watching technical lectures advances <span className="text-[#C4B5FD] font-bold">WIS</span>, and maintaining daily streaks advances <span className="text-[#FF8A32] font-bold">CON</span>.
+            <div className="text-xs text-gray-400 font-mono bg-[#141414] p-2.5 rounded-lg border border-[#222222]">
+              <span className="text-[#FF8A32] font-bold uppercase tracking-wider">Note:</span> Completing college labs levels up <span className="text-[#F472B6] font-bold">STR</span>, watching technical lectures advances <span className="text-[#C4B5FD] font-bold">WIS</span>, and maintaining daily streaks advances <span className="text-[#FF8A32] font-bold">CON</span>.
             </div>
           </div>
         </Modal>

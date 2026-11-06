@@ -14,6 +14,10 @@ import {
   Flame,
   CheckCircle2,
   Cpu,
+  Compass,
+  PlaySquare,
+  Shield,
+  Layers,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { CommandBar } from '@/components/agent/CommandBar';
@@ -56,8 +60,15 @@ export default function Home() {
   const recentWebsites = store.websites.slice(0, 3);
   const latestMilestone = store.milestones[0];
 
+  // Dynamic player progression calculations
+  const totalPlayerXp = store.profile.totalCraftsmanXp + store.profile.totalVelocityXp + store.profile.totalKnowledgeXp;
+  const currentLevel = Math.max(1, Math.floor(totalPlayerXp / 250) + 1);
+  const currentLevelBaseXp = (currentLevel - 1) * 250;
+  const currentXpProgress = Math.max(0, totalPlayerXp - currentLevelBaseXp);
+  const nextLevelRequirement = 250;
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#0c0d11] text-[#f4f4f6]">
+    <div className="min-h-screen flex flex-col bg-[#101010] text-[#F5F0E5]">
       {/* Top Header */}
       <Header
         profile={store.profile}
@@ -67,27 +78,38 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Navigation Tabs (Minimal Neo-Brutalist Pill Switcher) */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar border-b border-[#232733]">
+        {/* Navigation Tabs (Sleek Anime RPG HUD Switcher) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar border-b border-[#222222]">
           {[
-            { id: 'focus', label: '🏠 Daily Focus' },
-            { id: 'vault', label: `🔖 Vault (${store.websites.length})` },
-            { id: 'youtube', label: `🎬 YouTube (${store.youtubeVideos.filter(v => v.status === 'to_watch').length})` },
-            { id: 'journey', label: `⚔️ Journey & Labs (${store.milestones.length})` },
-            { id: 'skills', label: `🌳 Skill Matrix (${store.skills.length})` },
+            { id: 'focus', label: 'Daily Focus', icon: Compass, count: null },
+            { id: 'vault', label: 'Vault', icon: Bookmark, count: store.websites.length },
+            { id: 'youtube', label: 'YouTube', icon: PlaySquare, count: store.youtubeVideos.filter((v) => v.status === 'to_watch').length },
+            { id: 'journey', label: 'Journey & Labs', icon: Shield, count: store.milestones.length },
+            { id: 'skills', label: 'Skill Matrix', icon: Layers, count: store.skills.length },
           ].map((tab) => {
+            const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-mono font-bold border-2 transition-all shadow-[2px_2px_0px_#000] whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-mono font-bold border transition-all whitespace-nowrap flex items-center gap-2 ${
                   isActive
-                    ? 'bg-white text-black border-black shadow-[3px_3px_0px_#000]'
-                    : 'bg-[#14161c] text-gray-300 border-[#2d323d] hover:border-gray-400'
+                    ? 'bg-[#1e1e1e] text-[#F5F0E5] border-[#FF8A32] shadow-[0_0_12px_rgba(255,138,50,0.18)]'
+                    : 'bg-[#141414] text-[#888888] border-[#242424] hover:text-[#F5F0E5] hover:border-[#383838]'
                 }`}
               >
-                {tab.label}
+                <Icon size={15} className={isActive ? 'text-[#FF8A32]' : 'text-[#777777]'} />
+                <span>{tab.label}</span>
+                {tab.count !== null && (
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+                      isActive ? 'bg-[#2a2a2a] text-[#FF8A32]' : 'bg-[#1a1a1a] text-[#666666]'
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -113,151 +135,159 @@ export default function Home() {
         {/* TAB 1: DAILY FOCUS DASHBOARD */}
         {activeTab === 'focus' && (
           <div className="space-y-8">
-            {/* Anime RPG Character Progression Card */}
+            {/* Anime RPG Character Progression Card (Hero Status Screen) */}
             <CharacterDashboard
               initialData={{
                 ...INITIAL_CHARACTER_DATA,
                 name: store.profile.name || 'Sidd',
+                level: currentLevel,
+                currentXp: currentXpProgress,
+                nextLevelXp: nextLevelRequirement,
                 streakDays: store.profile.streakDays,
                 totalAchievements: store.milestones.length,
-                totalXp: store.profile.totalCraftsmanXp + store.profile.totalVelocityXp + store.profile.totalKnowledgeXp,
+                totalXp: totalPlayerXp,
                 attributes: {
-                  ...INITIAL_CHARACTER_DATA.attributes,
                   CON: {
                     ...INITIAL_CHARACTER_DATA.attributes.CON,
-                    value: Math.min(30, 15 + store.profile.streakDays),
+                    value: Math.min(30, 12 + store.profile.streakDays),
+                  },
+                  FOC: {
+                    ...INITIAL_CHARACTER_DATA.attributes.FOC,
+                    value: Math.min(30, 8 + store.youtubeVideos.filter((v) => v.status === 'watched').length * 2),
+                  },
+                  DIS: {
+                    ...INITIAL_CHARACTER_DATA.attributes.DIS,
+                    value: Math.min(30, 10 + store.milestones.filter((m) => m.authorship === 'handcrafted').length * 4),
                   },
                   STR: {
                     ...INITIAL_CHARACTER_DATA.attributes.STR,
-                    value: Math.min(30, Math.floor(store.profile.totalCraftsmanXp / 50)),
+                    value: Math.min(30, 8 + Math.floor(store.profile.totalCraftsmanXp / 50)),
                   },
                   WIS: {
                     ...INITIAL_CHARACTER_DATA.attributes.WIS,
-                    value: Math.min(30, Math.floor(store.profile.totalKnowledgeXp / 30)),
+                    value: Math.min(30, 8 + Math.floor((store.profile.totalKnowledgeXp + store.profile.totalVelocityXp) / 45)),
                   },
                 },
               }}
             />
 
-            {/* Dual Radar XP & Track Overview Card */}
+            {/* Dual Mastery Specialization Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Craftsman Box */}
-              <div className="brutal-card p-5 bg-[#141b18] border-2 border-[#6ee7b7]/60 shadow-[4px_4px_0px_#000]">
+              <div className="p-5 rounded-2xl bg-[#171717] border border-[#282828] hover:border-[#E9A13D]/50 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition-all">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2 text-[#6ee7b7]">
+                  <div className="flex items-center gap-2 text-[#E9A13D]">
                     <ShieldCheck size={20} />
-                    <span className="font-mono text-sm font-bold uppercase tracking-wider">
-                      Craftsman Mastery
+                    <span className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-[#F5F0E5]">
+                      Craftsman Discipline
                     </span>
                   </div>
-                  <Badge variant="craftsman">100% Core Code</Badge>
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#241c10] text-[#E9A13D] border border-[#E9A13D]/40">
+                    100% Core Code
+                  </span>
                 </div>
-                <div className="text-3xl font-mono font-black text-white mb-1">
-                  {store.profile.totalCraftsmanXp} <span className="text-sm text-gray-400 font-normal">XP</span>
+                <div className="text-3xl font-mono font-black text-[#F5F0E5] mb-1">
+                  {store.profile.totalCraftsmanXp} <span className="text-xs text-[#777777] font-normal">XP</span>
                 </div>
-                <p className="text-xs text-gray-300 leading-relaxed mb-4">
+                <p className="text-xs text-[#888888] leading-relaxed mb-4">
                   Gained from college labs, coursework, manual debugging, and scratch implementations. Never artificially inflated by AI-generated boilerplate.
                 </p>
-                <Button
-                  variant="mint"
-                  size="sm"
-                  className="w-full text-xs"
+                <button
+                  className="w-full py-2 px-3 rounded-lg bg-[#202020] text-xs font-mono font-bold text-[#E9A13D] border border-[#333333] hover:border-[#E9A13D] hover:bg-[#252018] transition-all flex items-center justify-center gap-1.5"
                   onClick={() => setActiveTab('journey')}
                 >
-                  View College Labs & Coursework <ArrowRight size={14} />
-                </Button>
+                  <span>Inspect College Labs & Coursework</span> <ArrowRight size={14} />
+                </button>
               </div>
 
               {/* Velocity Box */}
-              <div className="brutal-card p-5 bg-[#1b1725] border-2 border-[#c4b5fd]/60 shadow-[4px_4px_0px_#000]">
+              <div className="p-5 rounded-2xl bg-[#171717] border border-[#282828] hover:border-[#FF8A32]/50 shadow-[0_8px_24px_rgba(0,0,0,0.45)] transition-all">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2 text-[#c4b5fd]">
+                  <div className="flex items-center gap-2 text-[#FF8A32]">
                     <Zap size={20} />
-                    <span className="font-mono text-sm font-bold uppercase tracking-wider">
-                      AI & Velocity Mastery
+                    <span className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-[#F5F0E5]">
+                      Velocity Arcanum
                     </span>
                   </div>
-                  <Badge variant="velocity">Rapid Shipping</Badge>
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#26160d] text-[#FF8A32] border border-[#FF8A32]/40">
+                    Rapid Shipping
+                  </span>
                 </div>
-                <div className="text-3xl font-mono font-black text-white mb-1">
-                  {store.profile.totalVelocityXp} <span className="text-sm text-gray-400 font-normal">XP</span>
+                <div className="text-3xl font-mono font-black text-[#F5F0E5] mb-1">
+                  {store.profile.totalVelocityXp} <span className="text-xs text-[#777777] font-normal">XP</span>
                 </div>
-                <p className="text-xs text-gray-300 leading-relaxed mb-4">
+                <p className="text-xs text-[#888888] leading-relaxed mb-4">
                   Gained from hackathon MVPs, prompt engineering, multi-agent pipelines, and high-speed product prototyping.
                 </p>
-                <Button
-                  variant="violet"
-                  size="sm"
-                  className="w-full text-xs"
+                <button
+                  className="w-full py-2 px-3 rounded-lg bg-[#202020] text-xs font-mono font-bold text-[#FF8A32] border border-[#333333] hover:border-[#FF8A32] hover:bg-[#261a12] transition-all flex items-center justify-center gap-1.5"
                   onClick={() => setActiveTab('skills')}
                 >
-                  View Tech Skill Tree <ArrowRight size={14} />
-                </Button>
+                  <span>Explore Tech Skill Matrix</span> <ArrowRight size={14} />
+                </button>
               </div>
             </div>
 
-            {/* UP NEXT TO WATCH (YouTube Mini-Queue) */}
+            {/* UP NEXT TO WATCH (Active Training Simulations) */}
             <div>
               <div className="flex items-center justify-between mb-3.5">
                 <div className="flex items-center gap-2">
-                  <Play size={18} className="text-amber-400 fill-amber-400" />
-                  <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide">
+                  <Play size={18} className="text-[#FF8A32] fill-[#FF8A32]" />
+                  <h3 className="text-sm sm:text-base font-bold text-[#F5F0E5] font-mono uppercase tracking-wide">
                     Up Next to Watch ({store.youtubeVideos.filter((v) => v.status === 'to_watch').length})
                   </h3>
                 </div>
                 <button
                   onClick={() => setActiveTab('youtube')}
-                  className="text-xs font-mono text-amber-300 hover:underline flex items-center gap-1"
+                  className="text-xs font-mono text-[#E9A13D] hover:underline flex items-center gap-1"
                 >
                   Full Watch Queue <ArrowRight size={12} />
                 </button>
               </div>
 
               {toWatchVideos.length === 0 ? (
-                <div className="brutal-card p-6 text-center text-gray-400 text-xs">
-                  Your Watch queue is clear! Paste a YouTube URL in the bar above to queue video learning.
+                <div className="rounded-xl p-6 text-center text-[#777777] text-xs bg-[#171717] border border-[#262626]">
+                  Your training queue is clear. Enter a YouTube URL in the terminal above to queue video learning.
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {toWatchVideos.map((video) => (
                     <div
                       key={video.id}
-                      className="brutal-card p-3.5 flex flex-col sm:flex-row gap-3.5 items-center justify-between hover:border-gray-300"
+                      className="p-3.5 rounded-xl bg-[#171717] border border-[#282828] flex flex-col sm:flex-row gap-3.5 items-center justify-between hover:border-[#404040] transition-colors"
                     >
-                      <div className="relative w-full sm:w-36 aspect-video bg-black rounded-lg overflow-hidden flex-shrink-0 border border-[#2d323d]">
+                      <div className="relative w-full sm:w-36 aspect-video bg-black rounded-lg overflow-hidden flex-shrink-0 border border-[#262626]">
                         <img
                           src={video.thumbnailUrl}
                           alt={video.title}
                           className="w-full h-full object-cover"
                         />
                         {video.duration && (
-                          <div className="absolute bottom-1 right-1 px-1 rounded bg-black/80 text-xs font-mono text-white">
+                          <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 text-[11px] font-mono text-white">
                             {video.duration}
                           </div>
                         )}
                       </div>
 
                       <div className="flex-1 min-w-0 w-full">
-                        <h4 className="text-xs font-bold text-white truncate mb-1">
+                        <h4 className="text-xs font-bold text-[#F5F0E5] truncate mb-1">
                           {video.title}
                         </h4>
-                        <p className="text-[11px] text-gray-400 font-mono mb-2">
+                        <p className="text-[11px] text-[#777777] font-mono mb-2">
                           {video.channelTitle}
                         </p>
                         <div className="flex items-center gap-2">
-                          <Button
-                            variant="mint"
-                            size="sm"
-                            className="py-1 px-2.5 text-[11px]"
+                          <button
                             onClick={() => store.markVideoWatched(video.id)}
+                            className="py-1 px-2.5 rounded-md bg-[#FF8A32] text-black text-[11px] font-mono font-black hover:bg-[#E9A13D] transition-colors flex items-center gap-1 active:scale-95 shadow-sm"
                           >
                             <CheckCircle2 size={13} /> Mark Watched (+35 XP)
-                          </Button>
+                          </button>
                           <a
                             href={video.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 rounded-lg bg-[#1f222a] text-gray-300 hover:text-white border border-[#2d323d]"
+                            className="p-1.5 rounded-lg bg-[#202020] text-gray-300 hover:text-white border border-[#2b2b2b]"
                           >
                             <ExternalLink size={14} />
                           </a>
@@ -271,18 +301,18 @@ export default function Home() {
 
             {/* RECENT VAULT WEBSITES & LATEST MILESTONE */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Recent Bookmarks */}
+              {/* Recent Bookmarks (Knowledge Codex) */}
               <div>
                 <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-2">
-                    <Bookmark size={18} className="text-[#93c5fd]" />
-                    <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide">
+                    <Bookmark size={18} className="text-[#E9A13D]" />
+                    <h3 className="text-sm sm:text-base font-bold text-[#F5F0E5] font-mono uppercase tracking-wide">
                       Recently Saved Resources
                     </h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('vault')}
-                    className="text-xs font-mono text-[#93c5fd] hover:underline flex items-center gap-1"
+                    className="text-xs font-mono text-[#E9A13D] hover:underline flex items-center gap-1"
                   >
                     View All Vault <ArrowRight size={12} />
                   </button>
@@ -292,20 +322,20 @@ export default function Home() {
                   {recentWebsites.map((site) => (
                     <div
                       key={site.id}
-                      className="brutal-card p-3.5 flex items-center justify-between gap-3 hover:border-gray-300"
+                      className="p-3.5 rounded-xl bg-[#171717] border border-[#282828] flex items-center justify-between gap-3 hover:border-[#383838] transition-colors"
                     >
                       <div className="min-w-0">
-                        <h4 className="text-xs font-bold text-white truncate mb-1">
+                        <h4 className="text-xs font-bold text-[#F5F0E5] truncate mb-1">
                           {site.title}
                         </h4>
-                        <p className="text-[11px] text-gray-400 truncate mb-1">
+                        <p className="text-[11px] text-[#777777] truncate mb-1">
                           {site.description || site.url}
                         </p>
                         <div className="flex gap-1">
                           {site.tags.slice(0, 2).map((t, i) => (
                             <span
                               key={i}
-                              className="text-xs font-mono px-1.5 py-0.2 rounded bg-[#1e222b] text-gray-400 border border-[#2d323d]"
+                              className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[#202020] text-[#888888] border border-[#2b2b2b]"
                             >
                               #{t}
                             </span>
@@ -317,7 +347,7 @@ export default function Home() {
                         href={site.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 rounded-lg bg-[#1b1e26] text-white hover:bg-white hover:text-black transition-colors border border-[#383e4d] flex-shrink-0"
+                        className="p-2 rounded-lg bg-[#202020] text-[#F5F0E5] hover:bg-[#FF8A32] hover:text-black transition-colors border border-[#2d2d2d] flex-shrink-0"
                       >
                         <ExternalLink size={14} />
                       </a>
@@ -326,47 +356,47 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Latest Milestone */}
+              {/* Latest Milestone (Chronicles of Ascension) */}
               <div>
                 <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-2">
-                    <Trophy size={18} className="text-amber-400" />
-                    <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide">
+                    <Trophy size={18} className="text-[#FF8A32]" />
+                    <h3 className="text-sm sm:text-base font-bold text-[#F5F0E5] font-mono uppercase tracking-wide">
                       Latest Verified Milestone
                     </h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('journey')}
-                    className="text-xs font-mono text-amber-300 hover:underline flex items-center gap-1"
+                    className="text-xs font-mono text-[#FF8A32] hover:underline flex items-center gap-1"
                   >
                     Full Timeline <ArrowRight size={12} />
                   </button>
                 </div>
 
                 {latestMilestone && (
-                  <div className="brutal-card p-4.5 bg-[#14161c] border-2 border-[#2d323d]">
+                  <div className="p-4 rounded-xl bg-[#171717] border border-[#282828]">
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-xs font-mono text-gray-400">
+                      <span className="text-xs font-mono text-[#777777]">
                         {latestMilestone.date}
                       </span>
-                      <span className="text-xs font-mono font-bold text-[#6ee7b7] px-2 py-0.5 rounded bg-[#16271e] border border-[#6ee7b7]/40">
+                      <span className="text-xs font-mono font-bold text-[#E9A13D] px-2 py-0.5 rounded bg-[#241c10] border border-[#E9A13D]/40">
                         {latestMilestone.authorship === 'handcrafted' ? '100% Handcrafted' : 'AI-Assisted'}
                       </span>
                     </div>
 
-                    <h4 className="text-sm font-bold text-white mb-2 leading-snug">
+                    <h4 className="text-sm font-bold text-[#F5F0E5] mb-2 leading-snug">
                       {latestMilestone.title}
                     </h4>
 
-                    <p className="text-xs text-gray-300 leading-relaxed mb-3.5 bg-[#1a1d24] p-3 rounded-lg border border-[#272b35]">
+                    <p className="text-xs text-[#888888] leading-relaxed mb-3.5 bg-[#141414] p-3 rounded-lg border border-[#222222]">
                       {latestMilestone.description}
                     </p>
 
                     <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="text-amber-300 font-bold">
+                      <span className="text-[#E9A13D] font-bold">
                         {latestMilestone.outcome}
                       </span>
-                      <span className="text-emerald-400 font-bold">
+                      <span className="text-[#FF8A32] font-bold">
                         +{latestMilestone.xpAwarded.craftsmanXp || latestMilestone.xpAwarded.velocityXp} XP Awarded
                       </span>
                     </div>

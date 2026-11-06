@@ -198,7 +198,7 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
             Cancel
           </Button>
           <Button variant="amber" type="submit">
-            Add Video 🎬
+            Add Video
           </Button>
         </div>
       </form>

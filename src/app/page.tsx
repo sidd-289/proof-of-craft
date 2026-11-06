@@ -180,6 +180,9 @@ export default function Home() {
               initialData={{
                 ...INITIAL_CHARACTER_DATA,
                 name: store.profile.name || 'Sidd',
+                title: store.profile.title || 'Cyber Craftsman & System Architect',
+                avatarUrl: store.profile.avatarUrl || '/assets/character-cyber-craftsman.png',
+                customization: store.profile.characterCustomization || INITIAL_CHARACTER_DATA.customization,
                 level: currentLevel,
                 currentXp: currentXpProgress,
                 nextLevelXp: nextLevelRequirement,
@@ -234,8 +237,10 @@ export default function Home() {
                 },
               }}
               competitiveProfiles={store.profile.competitiveProfiles}
+              geminiApiKey={store.profile.geminiApiKey}
               onSaveCompetitiveProfile={store.saveCompetitiveProfile}
               onRemoveCompetitiveProfile={store.removeCompetitiveProfile}
+              onUpdateProfile={store.updateProfile}
             />
 
             {/* Dual Mastery Specialization Cards */}

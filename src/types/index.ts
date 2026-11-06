@@ -1,5 +1,7 @@
 import { UserCompetitiveProfiles, PlatformStats, PlatformType } from './profile';
+import { CharacterCustomization } from './character';
 export * from './profile';
+export * from './character';
 
 export type TrackType = 'craftsman' | 'velocity' | 'knowledge';
 
@@ -75,6 +77,9 @@ export interface Milestone {
 export interface UserProfile {
   name: string;
   title: string;
+  bio?: string;
+  avatarUrl?: string;
+  characterCustomization?: CharacterCustomization;
   totalCraftsmanXp: number;
   totalVelocityXp: number;
   totalKnowledgeXp: number;

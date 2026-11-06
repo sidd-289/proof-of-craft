@@ -81,6 +81,18 @@ export const Header: React.FC<HeaderProps> = ({ profile, onSaveApiKey, onResetDa
             </span>
           </div>
 
+          {/* Character Mini Avatar Pill */}
+          <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-[#181818] border border-[#2b2b2b] shadow-sm">
+            <img
+              src={profile.avatarUrl || '/assets/character-cyber-craftsman.png'}
+              alt={profile.name}
+              className="w-6 h-6 rounded-full object-cover border border-[#383838]"
+            />
+            <span className="text-xs font-mono font-bold text-[#F5F0E5] hidden md:inline">
+              {profile.name}
+            </span>
+          </div>
+
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}

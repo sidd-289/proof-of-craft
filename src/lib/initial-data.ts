@@ -236,7 +236,19 @@ export const INITIAL_MILESTONES: Milestone[] = [
 
 export const INITIAL_USER_PROFILE: UserProfile = {
   name: 'Sidd',
-  title: 'Polymath Engineer & Agent Architect',
+  title: 'Cyber Craftsman & System Architect',
+  bio: 'Building autonomous AI systems, bare-metal logic, and high-agency architectures.',
+  avatarUrl: '/assets/character.png',
+  characterCustomization: {
+    archetype: 'cyber_craftsman',
+    hairStyle: 'Spiky Rebel',
+    hairColor: '#171717',
+    auraColor: '#FF8A32',
+    gear: 'Holo-Blade of Logic',
+    expression: 'Focused',
+    bio: 'Crafting digital architectures from bare-metal logic to high-agency systems.',
+    element: 'Neon Flux',
+  },
   totalCraftsmanXp: 940,
   totalVelocityXp: 530,
   totalKnowledgeXp: 260,

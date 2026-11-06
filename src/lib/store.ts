@@ -309,6 +309,17 @@ export function useTrackerStore() {
     setProfile((prev) => ({ ...prev, geminiApiKey: key }));
   };
 
+  const updateProfile = (updated: Partial<UserProfile>) => {
+    setProfile((prev) => ({
+      ...prev,
+      ...updated,
+      characterCustomization: updated.characterCustomization
+        ? { ...(prev.characterCustomization || {}), ...updated.characterCustomization } as any
+        : prev.characterCustomization,
+    }));
+    sound.playSuccess();
+  };
+
   const saveCompetitiveProfile = (platform: PlatformType, stats: PlatformStats) => {
     setProfile((prev) => {
       const updatedProfiles = {
@@ -369,6 +380,7 @@ export function useTrackerStore() {
     logMilestone,
     addCategory,
     setGeminiApiKey,
+    updateProfile,
     saveCompetitiveProfile,
     removeCompetitiveProfile,
   };

@@ -7,44 +7,55 @@ import { LevelDisplay } from './LevelDisplay';
 import { XPProgressBar } from './XPProgressBar';
 import { AttributeStats } from './AttributeStats';
 import { RankBadge } from './RankBadge';
-import { CharacterIllustration } from './CharacterIllustration';
+import { FlipCharacterCard } from './FlipCharacterCard';
+import { ProfileCustomizerModal } from './ProfileCustomizerModal';
 import { CompetitiveProfilesModal } from './CompetitiveProfilesModal';
-import { CharacterData, AttributeStat, RankTier } from '@/types/character';
+import { CharacterData, AttributeStat, RankTier, CharacterCustomization } from '@/types/character';
 import { PlatformType, PlatformStats, UserCompetitiveProfiles } from '@/types/profile';
 import { Modal } from '@/components/ui/Modal';
-import { Sparkles, Edit3, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Sliders, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { GithubIcon, LeetCodeIcon, CodeforcesIcon, CodeChefIcon } from '@/components/ui/Icons';
 import { sound } from '@/lib/sound';
 
 interface CharacterDashboardProps {
   initialData: CharacterData;
   competitiveProfiles?: UserCompetitiveProfiles;
+  geminiApiKey?: string;
   onOpenSettings?: () => void;
   onXpGain?: (amount: number) => void;
   onSaveCompetitiveProfile?: (platform: PlatformType, stats: PlatformStats) => void;
   onRemoveCompetitiveProfile?: (platform: PlatformType) => void;
+  onUpdateProfile?: (updated: {
+    name: string;
+    title: string;
+    avatarUrl?: string;
+    customization?: CharacterCustomization;
+  }) => void;
 }
 
 export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
   initialData,
   competitiveProfiles,
+  geminiApiKey,
   onOpenSettings,
   onXpGain,
   onSaveCompetitiveProfile,
   onRemoveCompetitiveProfile,
+  onUpdateProfile,
 }) => {
   const [character, setCharacter] = useState<CharacterData>(initialData);
   const [selectedAttribute, setSelectedAttribute] = useState<AttributeStat | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCustomizerModalOpen, setIsCustomizerModalOpen] = useState(false);
   const [isCompetitiveModalOpen, setIsCompetitiveModalOpen] = useState(false);
-  const [editName, setEditName] = useState(character.name);
-  const [editTitle, setEditTitle] = useState(character.title);
 
   // Sync state if external store data updates (e.g. video watched, lab logged)
   useEffect(() => {
     setCharacter((prev) => ({
       ...prev,
       name: initialData.name || prev.name,
+      title: initialData.title || prev.title,
+      avatarUrl: initialData.avatarUrl || prev.avatarUrl,
+      customization: initialData.customization || prev.customization,
       streakDays: initialData.streakDays,
       totalAchievements: initialData.totalAchievements,
       totalXp: initialData.totalXp,
@@ -73,17 +84,7 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
 
   const handleRankSelect = (newRank: RankTier) => {
     setCharacter((prev) => ({ ...prev, rank: newRank }));
-  };
-
-  const handleSaveProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCharacter((prev) => ({
-      ...prev,
-      name: editName.trim() || prev.name,
-      title: editTitle.trim() || prev.title,
-    }));
-    sound.playSuccess();
-    setIsEditModalOpen(false);
+    sound.playLevelUp();
   };
 
   return (
@@ -132,14 +133,17 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                     <span className="hidden sm:inline">Linked Profiles</span>
                   </button>
 
-                  {/* Edit Character Trigger */}
+                  {/* Profile & Avatar Studio Trigger */}
                   <button
-                    onClick={() => setIsEditModalOpen(true)}
-                    className="p-1.5 px-2 rounded-lg text-gray-400 hover:text-[#F5F0E5] hover:bg-[#202020] transition-colors text-xs flex items-center gap-1 font-mono"
-                    title="Edit Character"
+                    onClick={() => {
+                      sound.playClick();
+                      setIsCustomizerModalOpen(true);
+                    }}
+                    className="p-1.5 px-2.5 rounded-lg text-gray-300 hover:text-[#F5F0E5] hover:bg-[#202020] border border-[#2d2d2d] transition-all text-xs flex items-center gap-1.5 font-mono shadow-sm active:scale-95"
+                    title="Profile & Custom Anime Avatar Studio"
                   >
-                    <Edit3 size={14} />
-                    <span className="hidden sm:inline">Edit</span>
+                    <Sliders size={13} className="text-[#FF8A32]" />
+                    <span className="hidden sm:inline">Avatar Studio</span>
                   </button>
                 </div>
               </div>
@@ -230,26 +234,17 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
             </div>
           </div>
 
-          {/* RIGHT 40%: Character Illustration & Rank Badge */}
-          <div className="w-full lg:w-[42%] min-h-[340px] sm:min-h-[420px] relative flex flex-col justify-between items-center bg-gradient-to-b from-[#1a1a1a]/40 to-[#121212]/80 rounded-xl border border-[#262626] overflow-hidden p-3">
-            {/* Anime Character Artwork with Aura */}
-            <div className="w-full flex-1 flex items-end justify-center">
-              <CharacterIllustration
-                avatarUrl={character.avatarUrl}
-                accentColor="#FF8A32"
-              />
-            </div>
-
-            {/* Bottom-Right Rank System Badge */}
-            <div className="w-full flex items-center justify-between pt-2 border-t border-[#262626]/80 px-2 z-30">
-              <div className="text-[11px] font-mono text-gray-400">
-                Tier Rank:
-              </div>
-              <RankBadge
-                currentRank={character.rank}
-                onRankSelect={handleRankSelect}
-              />
-            </div>
+          {/* RIGHT 42%: 3D Flippable Holographic Character Card */}
+          <div className="w-full lg:w-[42%] flex items-center justify-center">
+            <FlipCharacterCard
+              character={character}
+              competitiveProfiles={competitiveProfiles}
+              onRankSelect={handleRankSelect}
+              onOpenCustomizer={() => {
+                sound.playClick();
+                setIsCustomizerModalOpen(true);
+              }}
+            />
           </div>
         </div>
       </div>
@@ -269,7 +264,8 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                   {selectedAttribute.value} / {selectedAttribute.maxValue}
                 </p>
               </div>
-              <div className="w-16 h-16 rounded-xl flex items-center justify-center font-mono font-black text-2xl border border-black shadow-md"
+              <div
+                className="w-16 h-16 rounded-xl flex items-center justify-center font-mono font-black text-2xl border border-black shadow-md"
                 style={{ backgroundColor: selectedAttribute.color, color: '#101010' }}
               >
                 {selectedAttribute.code}
@@ -287,58 +283,25 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
         </Modal>
       )}
 
-      {/* Edit Profile Modal */}
-      {isEditModalOpen && (
-        <Modal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          title="Configure Character Identity"
-        >
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            <div>
-              <label className="block text-xs font-mono font-bold text-gray-300 uppercase mb-1.5">
-                Character Name
-              </label>
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                placeholder="e.g. Andre, Sidd, Jinwoo"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141414] border border-[#2b2b2b] text-[#F5F0E5] text-sm focus:outline-none focus:border-[#FF8A32]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono font-bold text-gray-300 uppercase mb-1.5">
-                Class / Title
-              </label>
-              <input
-                type="text"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                placeholder="e.g. Cyber Craftsman & System Architect"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141414] border border-[#2b2b2b] text-[#F5F0E5] text-sm focus:outline-none focus:border-[#FF8A32]"
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(false)}
-                className="px-4 py-2 rounded-lg bg-transparent text-gray-400 hover:text-white border border-[#2b2b2b] text-xs font-mono"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-[#FF8A32] text-black font-bold font-mono text-xs hover:bg-[#ff9c52] transition-colors"
-              >
-                Save Identity
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
+      {/* Profile & Anime Avatar Studio Modal */}
+      <ProfileCustomizerModal
+        isOpen={isCustomizerModalOpen}
+        onClose={() => setIsCustomizerModalOpen(false)}
+        character={character}
+        geminiApiKey={geminiApiKey}
+        onSave={(updated) => {
+          setCharacter((prev) => ({
+            ...prev,
+            name: updated.name,
+            title: updated.title,
+            avatarUrl: updated.avatarUrl || prev.avatarUrl,
+            customization: updated.customization || prev.customization,
+          }));
+          if (onUpdateProfile) {
+            onUpdateProfile(updated);
+          }
+        }}
+      />
 
       {/* Competitive Profiles & GitHub Tracker Modal */}
       <CompetitiveProfilesModal

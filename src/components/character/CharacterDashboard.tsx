@@ -12,8 +12,8 @@ import { CompetitiveProfilesModal } from './CompetitiveProfilesModal';
 import { CharacterData, AttributeStat, RankTier } from '@/types/character';
 import { PlatformType, PlatformStats, UserCompetitiveProfiles } from '@/types/profile';
 import { Modal } from '@/components/ui/Modal';
-import { Sparkles, Edit3, ShieldCheck, CheckCircle2, Code2, Terminal, Award } from 'lucide-react';
-import { GithubIcon } from '@/components/ui/Icons';
+import { Sparkles, Edit3, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { GithubIcon, LeetCodeIcon, CodeforcesIcon, CodeChefIcon } from '@/components/ui/Icons';
 import { sound } from '@/lib/sound';
 
 interface CharacterDashboardProps {
@@ -119,17 +119,17 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                 />
 
                 <div className="flex items-center gap-1.5">
-                  {/* Competitive IDs / Guild Profiles Trigger */}
+                  {/* Linked Profiles Trigger */}
                   <button
                     onClick={() => {
                       sound.playClick();
                       setIsCompetitiveModalOpen(true);
                     }}
                     className="p-1.5 px-2.5 rounded-lg bg-[#202020] text-gray-300 hover:text-[#F5F0E5] hover:border-[#FF8A32]/60 border border-[#2d2d2d] transition-all text-xs flex items-center gap-1.5 font-mono shadow-sm active:scale-95"
-                    title="Track Competitive Profiles & GitHub"
+                    title="Login & Link Profiles (GitHub, LeetCode, Codeforces, CodeChef)"
                   >
                     <ShieldCheck size={14} className="text-[#E9A13D]" />
-                    <span className="hidden sm:inline">Track IDs</span>
+                    <span className="hidden sm:inline">Linked Profiles</span>
                   </button>
 
                   {/* Edit Character Trigger */}
@@ -166,7 +166,7 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                         className="px-2.5 py-1 rounded-md bg-[#221a0f] border border-[#FFA116]/40 hover:border-[#FFA116] text-xs font-mono text-[#FFA116] flex items-center gap-1.5 transition-all shadow-sm"
                         title="LeetCode Verified Proof"
                       >
-                        <Code2 size={12} />
+                        <LeetCodeIcon size={13} />
                         <span>LeetCode</span>
                         <span className="text-[10px] text-[#F5F0E5]">({competitiveProfiles.leetcode.metrics?.primaryValue} Solved)</span>
                         <CheckCircle2 size={11} className="text-emerald-400" />
@@ -178,7 +178,7 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                         className="px-2.5 py-1 rounded-md bg-[#0a2133] border border-[#38BDF8]/40 hover:border-[#38BDF8] text-xs font-mono text-[#38BDF8] flex items-center gap-1.5 transition-all shadow-sm"
                         title="Codeforces Verified Proof"
                       >
-                        <Terminal size={12} />
+                        <CodeforcesIcon size={13} />
                         <span>CF</span>
                         <span className="text-[10px] text-[#F5F0E5]">({competitiveProfiles.codeforces.metrics?.primaryValue} {competitiveProfiles.codeforces.metrics?.rankTitle})</span>
                         <CheckCircle2 size={11} className="text-emerald-400" />
@@ -190,7 +190,7 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                         className="px-2.5 py-1 rounded-md bg-[#1f1733] border border-[#C4B5FD]/40 hover:border-[#C4B5FD] text-xs font-mono text-[#C4B5FD] flex items-center gap-1.5 transition-all shadow-sm"
                         title="CodeChef Verified Proof"
                       >
-                        <Award size={12} />
+                        <CodeChefIcon size={13} />
                         <span>CodeChef</span>
                         <span className="text-[10px] text-[#F5F0E5]">({competitiveProfiles.codechef.metrics?.primaryValue})</span>
                         <CheckCircle2 size={11} className="text-emerald-400" />
@@ -203,7 +203,7 @@ export const CharacterDashboard: React.FC<CharacterDashboardProps> = ({
                     className="px-2.5 py-1 rounded-md bg-[#181818] border border-dashed border-[#383838] hover:border-[#FF8A32] text-xs font-mono text-gray-400 hover:text-[#F5F0E5] flex items-center gap-1.5 transition-all"
                   >
                     <ShieldCheck size={13} className="text-[#E9A13D]" />
-                    <span>+ Link & Verify Competitive IDs & GitHub</span>
+                    <span>+ Login & Link Profiles (GitHub, LeetCode, Codeforces, CodeChef)</span>
                   </button>
                 )}
               </div>

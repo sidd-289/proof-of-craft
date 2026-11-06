@@ -226,25 +226,28 @@ export async function POST(req: NextRequest) {
       }
 
       const html = await res.text();
-      const ratingMatch = html.match(/class="rating-number">([0-9]+)<\/div>/) || html.match(/rating-header[^"]*">\s*([0-9]+)/);
-      const starsMatch = html.match(/class="rating-star"><span>([0-9\u2605]+)<\/span>/);
-      const nameMatch = html.match(/class="user-details-container[^"]*">\s*<h1>([^<]+)<\/h1>/);
+      const ratingMatch = html.match(/class="rating-number"[^>]*>\s*([0-9]+)\s*<\/div>/i) || html.match(/"rating":\s*"([0-9]+)"/);
+      const starCount = (html.match(/&#9733;|\u2605/g) || []).length;
+      const starsVal = starCount > 0 ? `${starCount}-Star` : 'Active Competitor';
+      const globalRankMatch = html.match(/global rank\s*([0-9]+)/i);
+      const nameMatch = html.match(/class="user-details-container[^"]*">\s*<h1>([^<]+)<\/h1>/i) || html.match(/<title>([^|-]+)/i);
 
       if (!ratingMatch) {
         return NextResponse.json({
           success: false,
-          error: `CodeChef handle "${cleanUsername}" was not found.`,
+          error: `CodeChef handle "${cleanUsername}" was not found or has no active rating.`,
         });
       }
 
       const ratingVal = parseInt(ratingMatch[1], 10);
-      const starsVal = starsMatch ? starsMatch[1] : 'Active';
 
       const metrics: PlatformMetrics = {
         primaryLabel: 'Contest Rating',
         primaryValue: ratingVal,
-        secondaryLabel: 'Star Division',
+        secondaryLabel: 'Division',
         secondaryValue: starsVal,
+        tertiaryLabel: 'Global Rank',
+        tertiaryValue: globalRankMatch ? `#${parseInt(globalRankMatch[1], 10).toLocaleString()}` : 'Top Tier',
         rankTitle: `${starsVal} Competitive Coder`,
         profileUrl: `https://www.codechef.com/users/${encodeURIComponent(cleanUsername)}`,
         details: {

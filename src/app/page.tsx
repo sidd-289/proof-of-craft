@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   Bookmark,
@@ -39,6 +39,46 @@ export default function Home() {
   const store = useTrackerStore();
   const [activeTab, setActiveTab] = useState<'focus' | 'vault' | 'youtube' | 'journey' | 'skills'>('focus');
   const [agentResult, setAgentResult] = useState<AgentActionExecution | null>(null);
+
+  // Auto-capture OAuth redirect callback (e.g. GitHub Sign-in)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !store.isLoaded) return;
+    const params = new URLSearchParams(window.location.search);
+    const authSuccess = params.get('auth_success');
+    const username = params.get('username');
+    const token = params.get('token');
+
+    if (authSuccess === 'github' && username) {
+      fetch('/api/verify-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platform: 'github',
+          username,
+          apiKey: token || undefined,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            store.saveCompetitiveProfile('github', {
+              platform: 'github',
+              username: data.username,
+              apiKey: token || undefined,
+              verified: true,
+              verifiedAt: data.verifiedAt || new Date().toISOString(),
+              metrics: data.metrics,
+            });
+          }
+        })
+        .catch(console.error)
+        .finally(() => {
+          // Clean URL params without page reload
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+        });
+    }
+  }, [store.isLoaded]);
 
   if (!store.isLoaded) {
     return (
@@ -187,7 +227,8 @@ export default function Home() {
                       30,
                       8 +
                         Math.floor((store.profile.totalKnowledgeXp + store.profile.totalVelocityXp) / 45) +
-                        (store.profile.competitiveProfiles?.github?.verified ? 3 : 0)
+                        (store.profile.competitiveProfiles?.github?.verified ? 3 : 0) +
+                        (store.profile.competitiveProfiles?.codechef?.verified ? 4 : 0)
                     ),
                   },
                 },
